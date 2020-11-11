@@ -26,13 +26,6 @@ public class AlertRabbit {
         return props;
     }
 
-    public static Connection getConnection(Properties props) throws SQLException {
-        String url = props.getProperty("url");
-        String login = props.getProperty("login");
-        String password = props.getProperty("password");
-        return DriverManager.getConnection(url, login, password);
-    }
-
     public static void init(Connection cn) {
         try (Statement st = cn.createStatement()) {
             String dropSql = "drop table if exists rabbit";
@@ -44,12 +37,14 @@ public class AlertRabbit {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        try {
-            Properties props = readProps("src/main/resources/rabbit.properties");
-            Connection connection = getConnection(props);
+    public static void main(String[] args) {
+        Properties props = readProps("src/main/resources/rabbit.properties");
+        String url = props.getProperty("url");
+        String login = props.getProperty("login");
+        String password = props.getProperty("password");
+        int interval = Integer.parseInt(props.getProperty("rabbit.interval"));
+        try (Connection connection = DriverManager.getConnection(url, login, password)) {
             init(connection);
-            int interval = Integer.parseInt(props.getProperty("rabbit.interval"));
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
             scheduler.start();
             JobDataMap data = new JobDataMap();
@@ -67,8 +62,8 @@ public class AlertRabbit {
             scheduler.scheduleJob(job, trigger);
             Thread.sleep(10000);
             scheduler.shutdown();
-        } catch (SchedulerException se) {
-            se.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

@@ -24,8 +24,6 @@ public class SqlRuParse implements Parse {
             for (int i = 3; i < row.size(); i++) {
                 Element href = row.get(i).child(0);
                 Post post = detail(href.attr("href"));
-                System.out.println("name: " + post.getName() + "link: "
-                        + post.getLink() + "created: " + post.getCrated() + System.lineSeparator());
                 posts.add(post);
             }
         } catch (Exception e) {
@@ -70,14 +68,14 @@ public class SqlRuParse implements Parse {
         System.out.println(parseDate.parseDate("сегодня, 16:01"));
         System.out.println(parseDate.parseDate("вчера, 22:01"));
         System.out.println(parseDate.parseDate("6 ноя 20, 10:18"));
-//
+
         SqlRuParse sqlRuParse = new SqlRuParse(parseDate);
         Post post = sqlRuParse.detail(
                 "https://www.sql.ru/forum/1330254/java-razrabotchik-ee");
         System.out.println(post.getName());
         System.out.println(post.getLink());
         System.out.println(post.getDesc());
-        System.out.println(post.getCrated());
+        System.out.println(post.getCreated());
 
         sqlRuParse.list("https://www.sql.ru/forum/job-offers/13");
 

@@ -8,16 +8,24 @@ public class Post {
     private String name;
     private String desc;
     private String link;
-    private Timestamp crated;
+    private Timestamp created;
 
     public Post() {
     }
 
-    public Post(String name, String desc, String link, Timestamp crated) {
+    public Post(String name, String desc, String link, Timestamp created) {
         this.name = name;
         this.desc = desc;
         this.link = link;
-        this.crated = crated;
+        this.created = created;
+    }
+
+    public Post(long id, String name, String desc, String link, Timestamp created) {
+        this.id = id;
+        this.name = name;
+        this.desc = desc;
+        this.link = link;
+        this.created = created;
     }
 
     public String getDesc() {
@@ -28,12 +36,12 @@ public class Post {
         this.desc = desc;
     }
 
-    public Timestamp getCrated() {
-        return crated;
+    public Timestamp getCreated() {
+        return created;
     }
 
-    public void setCrated(Timestamp crated) {
-        this.crated = crated;
+    public void setCreated(Timestamp crated) {
+        this.created = crated;
     }
 
     public long getId() {
@@ -58,6 +66,16 @@ public class Post {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    @Override
+    public String toString() {
+        return "Post{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", link='" + link + '\''
+                + ", created=" + created
+                + '}';
     }
 
     @Override

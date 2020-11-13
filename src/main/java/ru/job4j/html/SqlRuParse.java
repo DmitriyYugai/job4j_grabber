@@ -17,7 +17,11 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 public class SqlRuParse {
-    private Map<String, Integer> months = new HashMap<>();
+    private ParseDate pd;
+
+    public SqlRuParse(ParseDate pd) {
+        this.pd = pd;
+    }
 
     public Set<Post> parsePages() throws Exception {
         for (int i = 1; i <= 5; i++) {
@@ -35,53 +39,13 @@ public class SqlRuParse {
         return null;
     }
 
-    public TwoTuple getDetail(String link) throws Exception {
+    private TwoTuple getDetail(String link) throws Exception {
         Document doc = Jsoup.connect(link).get();
         Element descElem = doc.select(".msgBody").get(1);
         Element dateElem = doc.select(".msgFooter").get(0);
         String desc = descElem.text();
         String date = dateElem.text().substring(0, dateElem.text().indexOf('[') - 1);
-        return new TwoTuple(desc, parseDate(date));
-    }
-
-    private Timestamp parseDate(String str) {
-        if (str.startsWith("сегодня")) {
-            return getDate(str, LocalDate::now);
-        } else if (str.startsWith("вчера")) {
-            return getDate(str, () -> LocalDate.now().minusDays(1));
-        }
-        String[] dateTime = str.split(" ");
-        int year = Integer.parseInt(dateTime[2].substring(0, 2)) + 2000;
-        init();
-        String s = dateTime[1];
-        int month = months.get(s);
-        int day = Integer.parseInt(dateTime[0]);
-        int hours = Integer.parseInt(dateTime[3].split(":")[0]);
-        int minutes = Integer.parseInt(dateTime[3].split(":")[1]);
-        return Timestamp.valueOf(LocalDateTime.of(year, month, day, hours, minutes));
-    }
-
-    private Timestamp getDate(String str, Supplier<LocalDate> sup) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedTime(
-                FormatStyle.SHORT);
-        String time = str.split(" ")[1];
-        LocalTime localTime = LocalTime.parse(time, formatter);
-        return Timestamp.valueOf(LocalDateTime.of(sup.get(), localTime));
-    }
-
-    private void init() {
-        months.put("янв", 1);
-        months.put("фев", 2);
-        months.put("мар", 3);
-        months.put("апр", 4);
-        months.put("май", 5);
-        months.put("июн", 6);
-        months.put("июл", 7);
-        months.put("авг", 8);
-        months.put("сен", 9);
-        months.put("окт", 10);
-        months.put("ноя", 11);
-        months.put("дек", 12);
+        return new TwoTuple(desc, pd.parseDate(date));
     }
 
     private static class TwoTuple {
@@ -116,11 +80,12 @@ public class SqlRuParse {
 //            }
 //        }
 
-        SqlRuParse sqlRuParse = new SqlRuParse();
-        System.out.println(sqlRuParse.parseDate("сегодня, 16:01"));
-        System.out.println(sqlRuParse.parseDate("вчера, 22:01"));
-        System.out.println(sqlRuParse.parseDate("6 ноя 20, 10:18"));
+        ParseDate parseDate = new ParseDate();
+        System.out.println(parseDate.parseDate("сегодня, 16:01"));
+        System.out.println(parseDate.parseDate("вчера, 22:01"));
+        System.out.println(parseDate.parseDate("6 ноя 20, 10:18"));
 
+        SqlRuParse sqlRuParse = new SqlRuParse(parseDate);
         System.out.println(sqlRuParse.getDetail(
                 "https://www.sql.ru/forum/1330328/back-end-razrabotchik-pl-sql"));
 

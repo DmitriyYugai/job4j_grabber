@@ -27,8 +27,8 @@ public class Grabber implements Grab {
     }
 
     public void cfg() throws IOException {
-        try (InputStream in = new FileInputStream(new File(
-                "src/main/resources/app.properties"))) {
+        try (InputStream in = Grabber.class.getClassLoader()
+                .getResourceAsStream("app.properties")) {
             cfg.load(in);
         }
     }

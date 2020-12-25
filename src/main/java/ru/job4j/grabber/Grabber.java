@@ -6,6 +6,7 @@ import org.quartz.impl.StdSchedulerFactory;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static org.quartz.JobBuilder.newJob;
@@ -56,11 +57,12 @@ public class Grabber implements Grab {
                     Integer.parseInt(cfg.getProperty("port")))) {
                 while (!server.isClosed()) {
                     Socket socket = server.accept();
-                    try (OutputStream out = socket.getOutputStream()) {
-                        out.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
+                    try (PrintWriter out = new PrintWriter(new OutputStreamWriter(
+                            socket.getOutputStream(), StandardCharsets.UTF_8), true)) {
+                        out.write("HTTP/1.1 200 OK\r\n\r\n");
                         for (Post post : store.getAll()) {
-                            out.write(post.toString().getBytes());
-                            out.write(System.lineSeparator().getBytes());
+                            out.write(post.toString());
+                            out.write(System.lineSeparator());
                         }
                     } catch (IOException io) {
                         io.printStackTrace();

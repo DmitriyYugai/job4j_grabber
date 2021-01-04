@@ -89,5 +89,5 @@
 ![Получение распарсенных вакансий через браузер 2](img/usage/web3.PNG)<br><br>
 Как видно, теперь данные отображаются корректно.
 ## Контакты
-Почта: studentnstu97@mail.ru<br>
+Почта: dmitry_yugay@mail.ru<br>
 Skype: live:.cid.9cdc925fb48220b4
